@@ -36,3 +36,12 @@ def safe_system_exec():
     # Guard: Subprocess with fixed argument list and shell=False - NOT command injection
     res = subprocess.run(["ls", "-la"], shell=False, capture_output=True, text=True)
     return res.stdout
+
+def safe_set_cookie(response, token: str):
+    # Guard: Session cookie with HttpOnly and Secure enabled
+    response.set_cookie(key="session_token", value=token, httponly=True, secure=True, samesite="lax")
+
+def safe_parse_xml(xml_text: str):
+    # Guard: Using defusedxml parser to prevent XXE attacks
+    import defusedxml.ElementTree as SafeET
+    return SafeET.fromstring(xml_text)
