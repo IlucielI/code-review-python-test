@@ -32,6 +32,10 @@ Benchmark test suite for automated code review engines on Python / FastAPI appli
 | `auth.py` | Hardcoded JWT Secret Key & Plaintext Password Logging | Information Disclosure | CWE-798 / CWE-532 | High | **BLOCKING** |
 | `redirect.py` | Open Redirect without host/domain validation | Redirection | CWE-601 | Medium | **BLOCKING** |
 | `user_profile.py` | IDOR on account deletion missing authentication/ownership | Broken Access Control | CWE-639 | High | **BLOCKING** |
+| `cors_config.py` | Permissive CORS with wildcard `*` origin and credentials enabled | CORS Misconfiguration | CWE-942 | High | **BLOCKING** |
+| `xml_parser.py` | XML parsing without entity expansion disabled (XXE) | Injection / XXE | CWE-611 | High | **BLOCKING** |
+| `cookie_auth.py` | Session cookie set without `httponly` and `secure` flags | Insecure Cookie / Session | CWE-614 / CWE-1004 | Medium | **NON-BLOCKING** |
+| `shell_runner.py` | Shell command injection via `os.popen` dynamic formatting | Command Execution | CWE-78 | High | **BLOCKING** |
 
 ### ⚡ Performance & Async Architecture
 
@@ -53,7 +57,7 @@ Benchmark test suite for automated code review engines on Python / FastAPI appli
 
 | File | Safe Pattern Implemented | Expected Reviewer Result |
 | :--- | :--- | :---: |
-| `safe_guards.py` | Parameterized SQLite queries (`?`), Whitelist domain redirects, `subprocess.run(shell=False)`, `tags=None` sentinel | **0 False Positives** (Clean) |
+| `safe_guards.py` | Parameterized SQLite queries (`?`), Whitelist domain redirects, `subprocess.run(shell=False)`, `tags=None` sentinel, `defusedxml` parser, `httponly=True, secure=True` cookies | **0 False Positives** (Clean) |
 
 ---
 
@@ -76,6 +80,6 @@ curl -X POST http://localhost:8081/api/v1/review/trigger \
 
 ## 📊 Benchmark Validation Results
 
-- **Detection Rate:** 10 / 10 (100%)
+- **Detection Rate:** 14 / 14 (100%)
 - **False Positive Rate:** 0 / 1 (`safe_guards.py` completely passed)
 - **False Negative Rate:** 0%
